@@ -6,7 +6,7 @@ import binascii
 
 
 test_dir = os.path.dirname(os.path.abspath(__file__))
-src_dir = os.path.join(test_dir, '../')
+src_dir = os.path.join(test_dir, '../src')
 sys.path.append(src_dir)
 
 from cryptotool import *
