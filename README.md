@@ -1,4 +1,4 @@
-tool for symmetric and asymmetric cryptography, hashing: AES, ECDSA, Elgamal, RSA, SHA256
+tool for symmetric and asymmetric cryptography, hashing: AES, ECDSA, Elgamal, RSA, SHA256, ECDH
 
 test: python test/test.py
 

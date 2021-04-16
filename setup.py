@@ -11,5 +11,7 @@ setup(
     python_requires='>=3.6, <4',
     install_requires=[
         'pycryptodome==3.10.1',
-        'ecdsa==0.16.1'],
+        'ecdsa==0.16.1',
+        'tinyec==0.3.1',
+    ],
 )
