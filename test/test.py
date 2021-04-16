@@ -6,7 +6,7 @@ import binascii
 
 
 test_dir = os.path.dirname(os.path.abspath(__file__))
-src_dir = os.path.join(test_dir, '../src')
+src_dir = os.path.join(test_dir, '../')
 sys.path.append(src_dir)
 
 from cryptotool import *
@@ -214,6 +214,23 @@ def test_rsa():
         print('Error RSA decrypt message, negative test')
 
 
+def test_ecdh():
+    print('-' * 10)
+    print('test ECDH')
+    alis_gen = ECDH()
+    alis_gen_priv_key = alis_gen.get_priv_key()
+    alis_import = ECDH(alis_gen_priv_key)
+
+    if alis_gen.get_pub_key() != alis_import.get_pub_key():
+        print('Error ECDH export-import private key, negative test')
+
+    bob_gen = ECDH()
+    bob_shared_key = bob_gen.get_shared_key(alis_gen.get_pub_key())
+    alis_shared_key = alis_gen.get_shared_key(bob_gen.get_pub_key())
+    if bob_shared_key != alis_shared_key:
+        print('Error ECDH shared key, negative test')
+
+
 def tests():
     print('test start')
     test_b58()
@@ -222,10 +239,10 @@ def tests():
     test_ecdsa()
     test_elgamal()
     test_rsa()
+    test_ecdh()
     print('-' * 10)
     print('test end')
 
 
 if __name__ == "__main__":
     tests()
-

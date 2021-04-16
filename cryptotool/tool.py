@@ -9,6 +9,19 @@ from Crypto.Math._IntegerGMP import IntegerGMP
 from Crypto.Util.number import GCD
 from Crypto.Util.asn1 import DerSequence
 import ecdsa
+from tinyec import registry
+from tinyec.ec import Point
+
+
+registry.EC_CURVE_REGISTRY['secp256k1'] = {
+    "p": 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F,
+    "a": 0x0000000000000000000000000000000000000000000000000000000000000000,
+    "b": 0x0000000000000000000000000000000000000000000000000000000000000007,
+    "g": (0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798,
+          0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8),
+    "n": 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141,
+    "h": 0x1,
+}
 
 
 def sha256(data):
@@ -217,3 +230,50 @@ class RSA:
         message_int = self.key._decrypt(secret_int)
         return message_int.to_bytes()
 
+
+class ECDH:
+    curve = registry.get_curve('secp256k1')
+    key_size = 256//8
+
+    def __init__(self, priv_key=b''):
+        if priv_key != b'':
+            self.set_priv_key(priv_key)
+        else:
+            self.gen_key()
+        self.__gen_pub_key()
+
+    def gen_key(self):
+        self.priv_key = random.StrongRandom().randint(0, self.curve.field.n)
+
+    def get_priv_key(self):
+        return self.priv_key.to_bytes(self.key_size, byteorder='big', signed=False)
+
+    def get_pub_key(self):
+        hex_x = self.pub_key.x.to_bytes(self.key_size, byteorder='big', signed=False)
+        hex_y = self.pub_key.y.to_bytes(self.key_size, byteorder='big', signed=False)
+        return hex_x + hex_y
+
+    def get_shared_key(self, neighbor_pub_key):
+        self.__set_neighbor_pub_key(neighbor_pub_key)
+        self.__calc_shared_key()
+        return self.__pack_shared_key()
+
+    def __pack_shared_key(self):
+        shared_key_int = self.shared_key.x ^ self.shared_key.y
+        return shared_key_int.to_bytes(self.key_size, byteorder='big', signed=False)
+
+    def __calc_shared_key(self):
+        self.shared_key = self.priv_key * self.neighbor_pub_key
+
+    def __set_neighbor_pub_key(self, neighbor_pub_key):
+        hex_x = neighbor_pub_key[: self.key_size]
+        hex_y = neighbor_pub_key[self.key_size: ]
+        x = int.from_bytes(hex_x, byteorder='big', signed=False)
+        y = int.from_bytes(hex_y, byteorder='big', signed=False)
+        self.neighbor_pub_key = Point(self.curve, x, y)
+
+    def __gen_pub_key(self):
+        self.pub_key = self.priv_key * self.curve.g
+
+    def set_priv_key(self, key):
+        self.priv_key = int.from_bytes(key, byteorder='big', signed=False)

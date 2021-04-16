@@ -10,5 +10,6 @@ from .tool import (
         AES,
         ECDSA,
         ELGAMAL,
-        RSA)
+        RSA,
+        ECDH)
 
