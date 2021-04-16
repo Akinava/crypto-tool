@@ -6,7 +6,6 @@ setup(
     description='cryptography tools',
     url='https://github.com/Akinava/crypto-tool',
     version='0.0.0',
-    package_dir={'': 'cryptotool'},
     packages=find_packages(),
     python_requires='>=3.6, <4',
     install_requires=[
