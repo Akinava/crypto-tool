@@ -231,7 +231,7 @@ def test_ecdh():
         print('Error ECDH shared key, negative test')
 
 
-def tests():
+if __name__ == "__main__":
     print('test start')
     test_b58()
     test_sha256()
@@ -242,7 +242,3 @@ def tests():
     test_ecdh()
     print('-' * 10)
     print('test end')
-
-
-if __name__ == "__main__":
-    tests()
