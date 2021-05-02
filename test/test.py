@@ -233,12 +233,12 @@ def test_ecdh():
 
 if __name__ == "__main__":
     print('test start')
-    test_b58()
-    test_sha256()
-    test_aes()
-    test_ecdsa()
+    # test_b58()
+    # test_sha256()
+    # test_aes()
+    # test_ecdsa()
     test_elgamal()
-    test_rsa()
-    test_ecdh()
+    # test_rsa()
+    # test_ecdh()
     print('-' * 10)
     print('test end')

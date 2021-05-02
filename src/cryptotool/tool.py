@@ -2,10 +2,8 @@
 import hashlib
 from Crypto.Cipher import AES as CipherAES
 from Crypto import Random
-from Crypto.Random import random
 from Crypto.PublicKey import ElGamal as CryptoElGamal
 from Crypto.PublicKey import RSA as CryptoRSA
-from Crypto.Math._IntegerGMP import IntegerGMP
 from Crypto.Util.number import GCD
 from Crypto.Util.asn1 import DerSequence
 import ecdsa
@@ -149,7 +147,7 @@ class ELGAMAL:
         key_data = []
         for part in range(8*len(key)//self.key_size):
             key_part = key[self.key_size//8 * part: self.key_size//8 * (part + 1)]
-            key_part_int = IntegerGMP.from_bytes(key_part)
+            key_part_int = int.from_bytes(key_part, byteorder='big', signed=False)
             key_data.append(key_part_int)
         self.key = CryptoElGamal.construct(key_data)
 
@@ -161,7 +159,7 @@ class ELGAMAL:
             raise Exception('Error: message length {} more then {}'.format(len(message), self.key_size//8))
         message_int = int.from_bytes(message, byteorder='big', signed=False)
         while 1:
-            k = random.StrongRandom().randint(1, int(self.key.p)-1)
+            k = Random.random.StrongRandom().randint(1, int(self.key.p)-1)
             if GCD(k, int(self.key.p)-1) == 1: break
         a, b = self.key._encrypt(message_int, k)
         return a.to_bytes(self.key_size//8, byteorder='big', signed=False) + \
